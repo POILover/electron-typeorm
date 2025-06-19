@@ -17,12 +17,13 @@ async function serveStaticFile(filePath: string): Promise<Response> {
 }
 
 // 获取安全的文件路径，防止目录遍历攻击
-// 所谓的安全是指生成的路径是在baseDir的目录下，也就是说输入的路径经过resolve后，不能相对于base出现../形式的回退
-// !path.isAbsolute(relativePath)作为额外的安全检查, 确保本身应该是相对路径, 结果却是绝对路径, 这是一种边界情况, 例如base不合法或者是个空串
+// 所谓的安全指的是，生成的路径是在baseDir的目录下，也就是说输入的路径经过relative后，不能相对于baseDir出现../形式的回退
+// !path.isAbsolute(relativePath)作为额外的安全检查, 确保不会出现本身应该是相对路径, 结果却是绝对路径, 这是一种边界情况, 例如baseDir不合法或者是个空串
 type SafePath = string | undefined
 function getSafePath(baseDir: string, inputPath: string): SafePath {
-  // resolve和join不太一样, 如果是resolve(/xxx/, /uploads/), 会直接返回/uploads/, 因为resolve是以前者做base, 相对于后者的完整路径, 但此时后者是一个绝对路径
-  // 如果是./uploads/ 或者 uploads/, 则返回的是对的
+  // resolve和join不太一样, 如果是resolve(/xxx/, /uploads/), 会直接返回/uploads/, 如果是join, 它会直接做拼接
+  // 因为resolve是以前者作为baseDir, 相对于后者的完整路径, 但此时后者是一个绝对路径, 所以它会返回这个绝对路径本身
+  // 如果是./uploads/ 或者 uploads/, 则它们返回的是一样的
   const resolvedPath = path.resolve(baseDir, decodeURIComponent(inputPath.replace(/^\/+/, '')))
   const resolvedBase = path.resolve(baseDir)
   const relativePath = path.relative(resolvedBase, resolvedPath)
