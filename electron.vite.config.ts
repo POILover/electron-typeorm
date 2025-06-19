@@ -7,24 +7,24 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
     build: {
       rollupOptions: {
-        external: ["better-sqlite3"],
+        external: ['better-sqlite3']
       }
     },
     resolve: {
       alias: {
-        '@shared': resolve('src/shared'),
+        '@shared': resolve('src/shared')
       }
-    },
+    }
   },
   preload: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [externalizeDepsPlugin()]
   },
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src'),
+        '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [vue()],
+    plugins: [vue()]
   }
 })

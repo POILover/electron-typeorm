@@ -1,2 +1,1 @@
-export class PhotoService {
-}
+export class PhotoService {}

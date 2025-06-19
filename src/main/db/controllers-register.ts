@@ -1,6 +1,6 @@
-import { serviceContainer } from "./service-container";
-import { UserController } from "./user/user.controllers"
+import { serviceContainer } from './service-container'
+import { UserController } from './user/user.controllers'
 
 export const registerControllers = () => {
-    new UserController(serviceContainer.userService);
+  new UserController(serviceContainer.userService)
 }

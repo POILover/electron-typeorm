@@ -1,13 +1,13 @@
-import { UserService } from "./user/user.services";
+import { UserService } from './user/user.services'
 function singleton<T>(factory: () => T): () => T {
   let instance: T | undefined
-  return () => instance ??= factory()
+  return () => (instance ??= factory())
 }
 
-const getUserService = singleton(() => new UserService());
+const getUserService = singleton(() => new UserService())
 
 export const serviceContainer = {
-    get userService() {
-        return getUserService()
-    }
+  get userService() {
+    return getUserService()
+  }
 }
