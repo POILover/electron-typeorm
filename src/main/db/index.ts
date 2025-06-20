@@ -14,7 +14,7 @@ export const initDB = (database: string): DataSource => {
     database: basePath,
     synchronize: true,
     prepareDatabase(db) {
-      db.pragma('foreign_keys = ON') // 启用外键约束
+      db.pragma('foreign_keys = ON') // 启用外键约束, 外键的值必须在关联表中存在
     }
   }
   return new DataSource(options)

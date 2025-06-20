@@ -6,6 +6,7 @@ import { createWindow } from './utils/main-window'
 import { registerControllers } from './db/controllers-register'
 import { setAppDataSource } from './db/data-source'
 import { initDB } from './db'
+import { registerIpcHandlers } from './ipc'
 
 // 注册自定义协议 - 必须在创建窗口之前调用
 registerCustomProtocol('app')
@@ -21,6 +22,7 @@ app.whenReady().then(async () => {
   const appDataSource = initDB('mwddata')
   await appDataSource.initialize()
   setAppDataSource(appDataSource)
+  registerIpcHandlers()
   registerControllers()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')

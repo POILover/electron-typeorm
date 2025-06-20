@@ -1,14 +1,20 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import type { UserAndPhotosVO, UserVO, UserEditDTO } from '@shared/types/user'
+import { UserAddDTO, UserUpdateDTO } from '@shared/dto/user.dto'
+import { UserAndPhotosVO, UserVO } from '@shared/vo/user.vo'
+import { ApiResponse } from '@shared/common/response'
+import { PhotoVO, SelectAndCopyImageVO } from '@shared/vo/photo.vo'
 declare global {
   interface Window {
     electron: ElectronAPI
     api: {
-      getUserAndPhotos: (id: number) => Promise<UserAndPhotosVO>
-      getUserList: () => Promise<UserVO[]>
-      getUserInfo: (id: number) => Promise<UserVO>
-      saveUser: (userData: UserEditDTO) => Promise<UserVO>
-      deleteUser: (id: number) => Promise<void>
+      selectImage: () => Promise<SelectAndCopyImageVO>
+      getUserAndPhotos: (id: number) => Promise<ApiResponse<UserAndPhotosVO>>
+      getUserList: () => Promise<ApiResponse<UserVO[]>>
+      getUserInfo: (id: number) => Promise<ApiResponse<UserVO>>
+      saveUser: (userData: UserUpdateDTO) => Promise<ApiResponse<UserVO>>
+      deleteUser: (id: number) => Promise<ApiResponse<void>>
+      addUser: (userData: UserAddDTO) => Promise<ApiResponse<UserVO>>
+      createPhoto: (photoData: any) => Promise<ApiResponse<PhotoVO>>
     }
   }
 }

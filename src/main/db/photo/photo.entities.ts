@@ -11,6 +11,9 @@ export class Photo {
   filename!: string
 
   @Column({ type: 'text' })
+  path!: string
+
+  @Column({ type: 'text' })
   source!: string
 
   @Column({ type: 'boolean', name: 'is_raw', default: false }) // typeorm会将boolean映射为0/1
@@ -22,7 +25,7 @@ export class Photo {
   }
 
   @Column({ type: 'integer', name: 'user_id' })
-  userId?: number // relations查找会返回这个userId字段
+  userId!: number // relations查找会返回这个userId字段
 
   @Exclude() // 来自 class-transformer 的Exclude装饰器, 可以让这个字段在序列化时不返回
   @ManyToOne(() => User, (user) => user.photoList, { onDelete: 'CASCADE' }) // onDelete: 'CASCADE' 表示当User被删除时, 关联的Photo也会被删除, 这是数据库级别的设置
