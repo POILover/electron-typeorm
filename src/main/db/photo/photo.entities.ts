@@ -24,6 +24,9 @@ export class Photo {
     return this.isRaw ? '是' : '否'
   }
 
+  // @Column({ type: 'text', name: 'alias' })
+  // alias?: string
+
   @Column({ type: 'integer', name: 'user_id' })
   userId!: number // relations查找会返回这个userId字段
 

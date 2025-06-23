@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { UserVO } from '@shared/vo/user.vo'
 import { PhotoCreateDTO } from '@shared/dto/photo.dto'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import UserEditDialog from './user-edit-dialog.vue'
 import UserDetailDialog from './user-detail-dialog.vue'
 const userList = ref<UserVO[]>([])
@@ -45,12 +45,12 @@ const getUserList = () => {
 onMounted(() => {
   getUserList()
 })
-const userDetailDialogRef = ref<InstanceType<typeof UserDetailDialog>>()
+const userDetailDialogRef = useTemplateRef<InstanceType<typeof UserDetailDialog>>('userDetailDialogRef')
 const onDetail = (row: UserVO) => {
   userDetailDialogRef.value?.showDialog(row.id)
 }
 
-const userEditDialogRef = ref<InstanceType<typeof UserEditDialog>>()
+const userEditDialogRef = useTemplateRef<InstanceType<typeof UserEditDialog>>('userEditDialogRef')
 const onEdit = (row: UserVO) => {
   userEditDialogRef.value?.showDialog(row.id)
 }

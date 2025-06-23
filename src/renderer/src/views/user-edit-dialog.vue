@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { UserUpdateDTO } from '@shared/dto/user.dto'
 import { FormInstance } from 'element-plus'
-import { computed, ref, toRaw } from 'vue'
+import { computed, ref, toRaw, useTemplateRef } from 'vue'
 const formRules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   realName: [{ required: true, message: '请输入真实姓名', trigger: 'blur' }]
@@ -63,7 +63,7 @@ const onCancel = () => {
   isDialogVisible.value = false
 }
 
-const userFormRef = ref<FormInstance>()
+const userFormRef = useTemplateRef<FormInstance>('userFormRef')
 const onSave = async () => {
   const valid = await userFormRef.value?.validate()
   if (!valid) {

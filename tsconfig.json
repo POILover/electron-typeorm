@@ -3,6 +3,8 @@
   "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
   "compilerOptions": {
     "baseUrl": ".",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
     "paths": {
       "@shared/*": [
         "src/shared/*"

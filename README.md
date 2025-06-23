@@ -1,9 +1,11 @@
-## Feature
+## TODO
 
 - [x] 支持在运行时的`开发环境`和`本地生产环境`中转发`/uploads/xxx`路径到本地相应文件夹, 以便在远程部署中通过`Nginx`统一资源路径映射
 - [x] 集成better-sqlite3
 - [x] 集成TypeORM
 - [ ] 实现仿MVC架构的数据库交互
+- [ ] 数据库迁移
+- [ ] 远程更新
 - [ ] 精简dependencies
 - [ ] 取消生产环境的调试模式
 
