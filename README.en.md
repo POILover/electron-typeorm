@@ -2,7 +2,7 @@
 
 ## TODO
 
-- [x] Support forwarding `/uploads/xxx` paths to the corresponding local folder at runtime in both `development` and `local production` environments, so that `Nginx` can uniformly map resource paths in remote deployment
+- [x] Support forwarding `/uploads/xxx` paths to the corresponding local folder at runtime in both `development` and `local production` environments, so that `nginx` can uniformly map resource paths in remote deployment if necessary
 - [x] Integrate `better-sqlite3`
 - [x] Integrate `TypeORM`
 - [x] Implement database interaction with a MVC style architecture
