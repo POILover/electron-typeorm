@@ -3,7 +3,7 @@ import path from 'path'
 import fs from 'fs/promises'
 import mime from 'mime-types'
 
-// 统一处理静态资源
+// handle static file serving for custom protocols
 async function serveStaticFile(filePath: string): Promise<Response> {
   try {
     const data = await fs.readFile(filePath)
@@ -59,11 +59,10 @@ const customProtocolMap: ProtocolMap = {
         let safeFilePath: SafePath
 
         if (url.pathname.startsWith('/uploads/')) {
-          // 拦截 /uploads/ 请求
+          // intercept /uploads/ app protocol requests
           const uploadsPath = path.resolve(app.getPath('userData'), 'uploads')
           safeFilePath = getSafePath(uploadsPath, url.pathname.replace(/^\/uploads\//, ''))
         } else {
-          // 默认访问 renderer 中的资源
           const rendererRoot = path.resolve(__dirname, '../renderer')
           safeFilePath = getSafePath(rendererRoot, url.pathname)
         }
@@ -79,7 +78,7 @@ const customProtocolMap: ProtocolMap = {
     install: () => {
       protocol.handle('http', async (request) => {
         const url = new URL(request.url)
-        // 拦截 /uploads/ 请求
+        // intercept /uploads/ http protocol requests
         if (url.pathname.startsWith('/uploads/')) {
           const uploadsPath = path.resolve(app.getPath('userData'), 'uploads')
           const safeFilePath = getSafePath(uploadsPath, url.pathname.replace(/^\/uploads\//, ''))

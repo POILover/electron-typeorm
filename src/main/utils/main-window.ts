@@ -20,6 +20,7 @@ export const createWindow = () => {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
+  // open devtools TODO: remove in final production
   mainWindow.webContents.openDevTools({ mode: 'detach' })
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)

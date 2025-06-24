@@ -8,19 +8,21 @@ import { setAppDataSource } from './db/data-source'
 import appDataSource from './db'
 import { registerIpcHandlers } from './ipc'
 
-// 注册自定义协议 - 必须在创建窗口之前调用
+// register customized protocols, it must be called before creating the window
 registerCustomProtocol('app')
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
-  // 安装自定义协议
+  // install custom protocol
   installCustomProtocol('app')
   installCustomProtocol('http')
-  // 初始化数据库
+  // initialize database
   await appDataSource.initialize()
+  await appDataSource.runMigrations()
   setAppDataSource(appDataSource)
+  // register ipc handlers
   registerIpcHandlers()
   registerControllers()
   // Set app user model id for windows
