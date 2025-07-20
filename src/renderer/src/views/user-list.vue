@@ -45,7 +45,8 @@ const getUserList = () => {
 onMounted(() => {
   getUserList()
 })
-const userDetailDialogRef = useTemplateRef<InstanceType<typeof UserDetailDialog>>('userDetailDialogRef')
+const userDetailDialogRef =
+  useTemplateRef<InstanceType<typeof UserDetailDialog>>('userDetailDialogRef')
 const onDetail = (row: UserVO) => {
   userDetailDialogRef.value?.showDialog(row.id)
 }

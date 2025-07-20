@@ -13,5 +13,5 @@
 
 ## Some Weird Issues
 
-1. If the module `sass` is placed in `dependencies`, the `electron-builder` script in `postinstall` cannot execute properly; putting it in `devDependencies` works fine  
+1. If the module `sass` is placed in `dependencies`, the `electron-builder` script in `postinstall` cannot execute properly; putting it in `devDependencies` works fine
 2. Because `IPC` in `electron` uses [Structured Clone Algorithm](https://www.electronjs.org/docs/latest/tutorial/ipc#object-serialization) to transfer data, it cannot serialize `Proxy` objects — you need to use `toRaw` to convert them into plain objects, or use `JSON.parse(JSON.stringify(obj))` as an alternative

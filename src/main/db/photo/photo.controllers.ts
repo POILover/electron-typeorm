@@ -4,11 +4,14 @@ import { instanceToPlain } from 'class-transformer'
 import { ipcMain } from 'electron'
 import { PhotoService } from './photo.services'
 export class PhotoController {
-  constructor(private photoService: PhotoService) {
+  constructor(
+    private photoService: PhotoService,
+    private ipcMonitor
+  ) {
     this.registerIpcHandlers()
   }
   registerIpcHandlers() {
-    ipcMain.handle('createPhoto', async (_, photoData) => {
+    this.ipcMonitor.wrapIpc()('createPhoto', async (_, photoData) => {
       try {
         const savedPhoto = await this.photoService.createPhoto(photoData)
         return ApiResponseFactory.ok(instanceToPlain(savedPhoto))

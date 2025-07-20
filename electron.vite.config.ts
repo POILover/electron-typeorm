@@ -17,6 +17,14 @@ export default defineConfig({
     }
   },
   preload: {
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/preload/index.ts'),
+          monitor: resolve(__dirname, 'src/preload/monitor.ts')
+        }
+      }
+    },
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {
