@@ -25,8 +25,8 @@
 //     // TODO: 注册派发数据handle
 //   }
 // }
+import { randomUUID } from 'crypto'
 import { app, globalShortcut, ipcMain, BrowserWindow, IpcMainInvokeEvent } from 'electron'
-import { join } from 'path'
 const MonitorBrowserWindowTitle = 'MONITOR'
 const shortcut = 'Control+Shift+M'
 const generateBrowserWindowTitle = (parentWindowId: number) => {
@@ -94,12 +94,12 @@ export default class IpcMonitor {
       const wrappedListener = async (event: IpcMainInvokeEvent, ...args: any[]) => {
         // TODO: 向特定的 MonitorWindow 发送数据
         const parentWindowId = event.sender.id
-
+        const wc = self.monitorWindowMap.get(parentWindowId)?.webContents
+        const uuid = randomUUID();
+        wc?.send('monitor:data', {uuid, status: 'pending', args, timestamp: Date.now()})
         const result = await listener(event, ...args)
-
-        self.monitorWindowMap
-          .get(parentWindowId)
-          ?.webContents.send('monitor:data', { args, result })
+        
+        wc?.send('monitor:data', { uuid, status: 'fullfilled', args, timestamp: Date.now(), result})
         return result
       }
 
