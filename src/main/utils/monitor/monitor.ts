@@ -97,7 +97,9 @@ export default class IpcMonitor {
 
         const result = await listener(event, ...args)
 
-        self.monitorWindowMap.get(parentWindowId)?.webContents.send('monitor:data', { args, result })
+        self.monitorWindowMap
+          .get(parentWindowId)
+          ?.webContents.send('monitor:data', { args, result })
         return result
       }
 
@@ -111,15 +113,37 @@ export default class IpcMonitor {
   }
 }
 
+const htmlContent = `
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Monitor</title>
+  </head>
+
+  <body>
+    <div id="ipc"></div>
+    <script>
+      require('electron').ipcRenderer.on('monitor:data', (_, data) => {
+        console.log(data)
+      })
+    </script>
+  </body>
+</html>
+
+`
+
 function createMonitorWindow(targetWindowId: number) {
   const monitorWindow = new BrowserWindow({
     title: generateBrowserWindowTitle(targetWindowId),
     width: 800,
     height: 600,
     webPreferences: {
-      preload: join(__dirname, '../preload/monitor.js'),
-      additionalArguments: [`--targetWindowId=${targetWindowId}`]
+      nodeIntegration: true,
+      contextIsolation: false
+      // preload: join(__dirname, '../preload/monitor.js'),
+      // additionalArguments: [`--targetWindowId=${targetWindowId}`]
     }
   })
-  monitorWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/monitor.html')
+  monitorWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`)
 }
