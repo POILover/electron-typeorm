@@ -27,9 +27,15 @@
 // }
 import { app, globalShortcut, ipcMain, BrowserWindow, IpcMainInvokeEvent } from 'electron'
 import { join } from 'path'
-const UniqueTitle = 'MONITOR'
+const MonitorBrowserWindowTitle = 'MONITOR'
 const shortcut = 'Control+Shift+M'
-
+const generateBrowserWindowTitle = (parentWindowId: number) => {
+  return `${MonitorBrowserWindowTitle}_${parentWindowId}`
+}
+const resolveBrowserWindowTitle = (id: string) => {
+  const [title, parentWindowId] = id.split('_')
+  return { title, parentWindowId: Number(parentWindowId) }
+}
 export default class IpcMonitor {
   private trackedWindowIds = new Set<number>()
   private monitorWindowMap = new Map<number, BrowserWindow>()
@@ -44,8 +50,9 @@ export default class IpcMonitor {
   private setupWindowLifecycle() {
     app.on('browser-window-created', (_, win) => {
       const id = win.id
-      if (win.title === UniqueTitle) {
-        this.monitorWindowMap.set(id, win)
+      const resolvedTitle = resolveBrowserWindowTitle(win.title)
+      if (resolvedTitle.title === MonitorBrowserWindowTitle) {
+        this.monitorWindowMap.set(resolvedTitle.parentWindowId, win)
         win.on('closed', () => {
           this.monitorWindowMap.delete(id)
         })
@@ -85,10 +92,13 @@ export default class IpcMonitor {
       listener: (event: IpcMainInvokeEvent, ...args: any[]) => any
     ) {
       const wrappedListener = async (event: IpcMainInvokeEvent, ...args: any[]) => {
-        self.monitorWindowMap.values().forEach((win) => {
-          win.webContents.send('monitor:data', [...args])
-        })
-        return listener(event, ...args)
+        // TODO: 向特定的 MonitorWindow 发送数据
+        const parentWindowId = event.sender.id
+
+        const result = await listener(event, ...args)
+
+        self.monitorWindowMap.get(parentWindowId)?.webContents.send('monitor:data', { args, result })
+        return result
       }
 
       self.originalHandle(channel, wrappedListener)
@@ -103,7 +113,7 @@ export default class IpcMonitor {
 
 function createMonitorWindow(targetWindowId: number) {
   const monitorWindow = new BrowserWindow({
-    title: UniqueTitle,
+    title: generateBrowserWindowTitle(targetWindowId),
     width: 800,
     height: 600,
     webPreferences: {
