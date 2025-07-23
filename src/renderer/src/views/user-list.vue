@@ -24,6 +24,7 @@
   </el-table>
   <UserEditDialog ref="userEditDialogRef" @save="onSaveSuccess" />
   <UserDetailDialog ref="userDetailDialogRef" />
+  <el-button type="primary" @click="onTimeout">延时</el-button>
 </template>
 
 <script lang="ts" setup>
@@ -78,5 +79,8 @@ const onAddPhoto = (row: UserVO) => {
       console.log('添加照片成功')
     })
   })
+}
+const onTimeout = () => {
+  window.api.createTimeout(2000)
 }
 </script>

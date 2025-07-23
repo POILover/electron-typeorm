@@ -7,7 +7,6 @@ import { registerControllers } from './db/controllers-register'
 import { setAppDataSource } from './db/data-source'
 import appDataSource from './db'
 import { registerIpcHandlers } from './ipc'
-import IpcMonitor from './utils/monitor/monitor'
 
 // register customized protocols, it must be called before creating the window
 registerCustomProtocol('app')
@@ -24,9 +23,8 @@ app.whenReady().then(async () => {
   await appDataSource.runMigrations()
   setAppDataSource(appDataSource)
   // register ipc handlers
-  const ipcMonitor = new IpcMonitor()
   registerIpcHandlers()
-  registerControllers(ipcMonitor)
+  registerControllers()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

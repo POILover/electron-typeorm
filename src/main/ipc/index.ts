@@ -2,6 +2,7 @@ import { SelectAndCopyImageVO } from '@shared/vo/photo.vo'
 import { app, dialog, ipcMain } from 'electron'
 import fs from 'fs'
 import path from 'path'
+import { ipcMonitorHandle } from '../utils/monitor/monitor'
 
 function normalizePath(filePath: string): string {
   // format path to POSIX style
@@ -39,5 +40,13 @@ export const registerIpcHandlers = () => {
       filePath: normalizePath(filePath)
     }
     return selectAndCopyImage
+  })
+  
+  ipcMonitorHandle('timeout', async(_, timeout)=>{
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(null)
+      }, timeout);
+    })
   })
 }

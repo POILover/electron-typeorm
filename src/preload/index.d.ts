@@ -15,6 +15,7 @@ declare global {
       deleteUser: (id: number) => Promise<ApiResponse<void>>
       addUser: (userData: UserAddDTO) => Promise<ApiResponse<UserVO>>
       createPhoto: (photoData: any) => Promise<ApiResponse<PhotoVO>>
+      createTimeout: (timeout: number) => Promise<null>
     }
   }
 }

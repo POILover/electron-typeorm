@@ -11,7 +11,8 @@ const api = {
   saveUser: (userData: UserUpdateDTO) => ipcRenderer.invoke('saveUser', userData),
   deleteUser: (id: number) => ipcRenderer.invoke('deleteUser', id),
   addUser: (userData: UserUpdateDTO) => ipcRenderer.invoke('addUser', userData),
-  createPhoto: (photoData: PhotoCreateDTO) => ipcRenderer.invoke('createPhoto', photoData)
+  createPhoto: (photoData: PhotoCreateDTO) => ipcRenderer.invoke('createPhoto', photoData),
+  createTimeout: (timeout: number) => ipcRenderer.invoke('timeout', timeout),
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

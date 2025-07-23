@@ -1,31 +1,3 @@
-// import { app, globalShortcut } from "electron"
-// const shortcut = "Control+Shift+M"
-// const shortcutHandler = () => {
-//   console.log('monitor window open')
-//   // TODO: 创建window(要区分是不是MonitorWindow，要invoke派发数据的handle)
-// }
-// export default class IpcMonitor {
-//   windowIdSet = new Set()
-//   constructor(){
-//     app.on('browser-window-created', (_, win)=>{
-//       // TODO: 如果是MonitorWindow，应该直接return
-//       win.on('focus', ()=>{
-//         globalShortcut.register(shortcut, shortcutHandler)
-//       })
-//       win.on('blur', ()=>{
-//         globalShortcut.unregister(shortcut)
-//       })
-//       win.on('closed', ()=>{
-//         globalShortcut.unregister(shortcut)
-//       })
-//     })
-//   }
-//   ipcHandle(){
-//     // TODO: 劫持ipcMain.handle方法
-//     // TODO: 注册派发数据handle
-//   }
-// }
-import { randomUUID } from 'crypto'
 import { app, globalShortcut, ipcMain, BrowserWindow, IpcMainInvokeEvent } from 'electron'
 const MonitorBrowserWindowTitle = 'MONITOR'
 const shortcut = 'Control+Shift+M'
@@ -37,10 +9,9 @@ const resolveBrowserWindowTitle = (id: string) => {
   return { title, parentWindowId: Number(parentWindowId) }
 }
 export default class IpcMonitor {
-  private trackedWindowIds = new Set<number>()
+  private static instance: IpcMonitor;
+  private initialId = 0
   private monitorWindowMap = new Map<number, BrowserWindow>()
-  private callLogs: Record<number, any[]> = {}
-  private monitorWindowType = 'monitor' // your custom type
   private originalHandle = ipcMain.handle.bind(ipcMain)
 
   constructor() {
@@ -71,31 +42,22 @@ export default class IpcMonitor {
       }
     })
   }
-
+  private getUuid(){
+    return Date.now().toString() + '-' + this.initialId++
+  }
   private openMonitorWindow(parentWindowId: number) {
-    console.log(`MonitorWindow open for window ${parentWindowId}`)
-    // 创建 MonitorWindow，并将 parentWindowId 注入 preload 或 query 参数
-    // 你需要自行实现 createMonitorWindow
     createMonitorWindow(parentWindowId)
   }
-  // TODO: 这个winId混淆了
   public wrapIpc() {
     const self = this
-
-    // 注册一个 handle 给 MonitorWindow 获取当前日志
-    // ipcMain.handle('monitor:getIpcLogs', (_, targetWindowId: number) => {
-    //   return self.callLogs[targetWindowId] ?? []
-    // })
-
     return function (
       channel: string,
       listener: (event: IpcMainInvokeEvent, ...args: any[]) => any
     ) {
       const wrappedListener = async (event: IpcMainInvokeEvent, ...args: any[]) => {
-        // TODO: 向特定的 MonitorWindow 发送数据
         const parentWindowId = event.sender.id
         const wc = self.monitorWindowMap.get(parentWindowId)?.webContents
-        const uuid = randomUUID();
+        const uuid = self.getUuid();
         wc?.send('monitor:data', {uuid, status: 'pending', args, timestamp: Date.now()})
         const result = await listener(event, ...args)
         
@@ -106,13 +68,15 @@ export default class IpcMonitor {
       self.originalHandle(channel, wrappedListener)
     }
   }
-
-  /** 在 createWindow 中调用 */
-  public markAsMonitoredWindow(win: BrowserWindow) {
-    this.trackedWindowIds.add(win.id)
+  static getInstance(): IpcMonitor {
+    if (!IpcMonitor.instance) {
+      IpcMonitor.instance = new IpcMonitor();
+    }
+    return IpcMonitor.instance;
   }
 }
-
+export const ipcMonitor = IpcMonitor.getInstance()
+export const ipcMonitorHandle = ipcMonitor.wrapIpc()
 const htmlContent = `
 <!doctype html>
 <html>
@@ -124,8 +88,11 @@ const htmlContent = `
   <body>
     <div id="ipc"></div>
     <script>
+      const list = []
       require('electron').ipcRenderer.on('monitor:data', (_, data) => {
-        console.log(data)
+        console.clear()
+        list.push(data)
+        console.table(list)
       })
     </script>
   </body>
