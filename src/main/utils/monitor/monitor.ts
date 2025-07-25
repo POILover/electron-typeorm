@@ -91,13 +91,22 @@ const htmlContent = `
       const list = []
       require('electron').ipcRenderer.on('monitor:data', (_, data) => {
         console.clear()
-        list.push(data)
+        if(data.status === 'pending') {
+          list.push(data)
+        }
+        if(data.status === 'fullfilled') {
+          const index = list.findIndex(item => item.uuid === data.uuid)
+          const pendingData = { ...list[index] }
+          if(index !== -1) {
+            data.timestamp = data.timestamp - pendingData.timestamp
+            list[index] = data
+          }
+        }
         console.table(list)
       })
     </script>
   </body>
 </html>
-
 `
 
 function createMonitorWindow(targetWindowId: number) {
