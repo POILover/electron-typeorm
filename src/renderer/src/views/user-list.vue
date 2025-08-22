@@ -75,6 +75,8 @@ const onAddPhoto = (row: UserVO) => {
     }
     window.api.createPhoto(photoCreateForm).then(() => {
       console.log('添加照片成功')
+    }).catch(error=>{
+      console.error('添加照片失败',error)
     })
   })
 }

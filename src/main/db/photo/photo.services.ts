@@ -4,9 +4,15 @@ import { getAppDataSource } from '../data-source'
 
 export class PhotoService {
   createPhoto = async (photo: PhotoCreateDTO) => {
-    const photoRepository = getAppDataSource().getRepository(Photo)
-    const newPhoto = photoRepository.create(photo)
-    const savedPhoto = await photoRepository.save(newPhoto)
-    return savedPhoto
+    try {
+      const photoRepository = getAppDataSource().getRepository(Photo)
+      const newPhoto = photoRepository.create(photo)
+      const savedPhoto = await photoRepository.save(newPhoto)
+      return savedPhoto
+
+    } catch (error) {
+      console.error('添加照片失败', error)
+      throw error
+    }
   }
 }

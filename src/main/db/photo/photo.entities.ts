@@ -24,7 +24,7 @@ export class Photo {
     return this.isRaw ? '是' : '否'
   }
 
-  @Column({ type: 'text', name: 'alias' }) // 测试数据库迁移
+  @Column({ type: 'text', name: 'alias', nullable: true }) // 测试数据库迁移
   alias?: string
 
   @Column({ type: 'integer', name: 'user_id' })
